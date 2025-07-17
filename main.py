@@ -3,42 +3,49 @@ import PySimpleGUI as sg
 import pyautogui
 import time
 
-time.sleep(5) # Tiempo para ir a la ventana de GLS
-
-pyautogui.write('TEST123456') # Escribe donde este el cursor
-pyautogui.press('tab')
-pyautogui.write('1')
-pyautogui.press('tab')
-pyautogui.press('space') # Marcar checkbox
-pyautogui.press('tab') # Para llegar a print
-pyautogui.press('enter') # Imprimir
+# === Coordenadas fijas — reemplazar con coordenadas reales ===
+TEXT_FIELD_COORDS = (650, 340)       # Campo donde se escribe el SKU
+CHECKBOX_COORDS = (660, 410)         # Checkbox "Include barcode"
+PRINT_BUTTON_COORDS = (900, 640)     # Botón "Print"
 
 # === Función para leer CSV y extraer columna de SKUs ===
 def load_skus_from_csv(file_path):
     try:
-        df = pd.read_csv(file_path)
-        sku_column = df.iloc[:, 4] # Columna 5 > indice 4
-        return sku_column.dropna().tolist()
+        df = pd.read_csv(file_path, sep=';')
+        if 'Sku' not in df.columns:
+            sg.popup_error("El CSV no contiene una columna llamada 'Sku'.")
+            return []
+        return df['Sku'].dropna().astype(str).tolist()
     except Exception as e:
-        sg.popup_error("Error al leer el archivo:", str(e))
+        sg.popup_error("Error al leer el archivo CSV:\n" + str(e))
         return []
 
-# === Función placeholder para automatizar GLS Ecomm ===
+# === Automatiza el ingreso de los SKUs en GLS Ecomm ===
 def process_skus_in_gls(sku_list, window):
+    sg.popup("El proceso comenzará en 5 segundos.\nAsegúrate de que la ventana de GLS esté maximizada y activa.")
+    time.sleep(5)
+
     for idx, sku in enumerate(sku_list, 1):
-        # Aquí iría el código con pyautogui:
-        # 1. Pegar SKU
-        # 2. Marcar checkbox
-        # 3. Pulsar botón Print
-        # 4. Esperar a que termine la impresión
-
         window['PROGRESS-'].update(f'Procesando SKU {idx} de {len(sku_list)}...')
+        window.refresh()
 
-        # Simulación de tiempo de espera (quitar luego)
-        import time
-        time.sleep(1)
+         # Campo de texto
+        pyautogui.click(TEXT_FIELD_COORDS)
+        time.sleep(0.4)
+        pyautogui.hotkey('ctrl', 'a')
+        pyautogui.press('backspace')
+        pyautogui.write(str(sku))
+        time.sleep(0.3)
 
-    sg.popup("Proceso completado.")
+        # Checkbox
+        pyautogui.click(CHECKBOX_COORDS)
+        time.sleep(0.2)
+
+        # Botón Print
+        pyautogui.click(PRINT_BUTTON_COORDS)
+        time.sleep(2.5)  # Ajusta si es lento el sistema   
+
+    sg.popup("✅ Proceso completado.")
 
 # === Función principal para la GUI ===
 def main():
@@ -61,10 +68,10 @@ def main():
         if event in (sg.WINDOW_CLOSED, "Exit"):
             break
 
-        if event == '-FILE':
-            file_path = values['-FILE']
+        if event == '-FILE-':
+            file_path = values['-FILE-']
             sku_list = load_skus_from_csv(file_path)
-            window['-SKU_COUNT'].update(str(len(sku_list)))
+            window['-SKU_COUNT-'].update(str(len(sku_list)))
             window['Ejecutar'].update(disabled=False if sku_list else True)
 
         if event == 'Ejecutar':
