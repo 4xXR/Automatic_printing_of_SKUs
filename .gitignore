@@ -12,3 +12,7 @@ __pycache__/
 
 # CSVs de entrada o salida
 *.csv
+
+build/
+data/
+*.spec
