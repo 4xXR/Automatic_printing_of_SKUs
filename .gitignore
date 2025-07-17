@@ -1,0 +1,14 @@
+# Entorno virtual
+venv/
+
+# Archivos temporales de Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Archivos de configuración de PyCharm/VSCode
+.idea/
+.vscode/
+
+# CSVs de entrada o salida
+*.csv
