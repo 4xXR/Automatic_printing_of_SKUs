@@ -3,10 +3,12 @@ import PySimpleGUI as sg
 import pyautogui
 import time
 
-# === Coordenadas fijas — reemplazar con coordenadas reales ===
-TEXT_FIELD_COORDS = (650, 340)       # Campo donde se escribe el SKU
-CHECKBOX_COORDS = (660, 410)         # Checkbox "Include barcode"
-PRINT_BUTTON_COORDS = (900, 640)     # Botón "Print"
+# === Coordenadas fijas capturadas ===
+TEXT_FIELD_COORDS        = (218, 365)
+LABELS_FIELD_COORDS      = (220, 421)
+CHECKBOX_COORDS          = (31, 470)
+PRINT_BUTTON_COORDS      = (892, 932)
+CONTINUE_BUTTON_COORDS   = (1154, 537)
 
 # === Función para leer CSV y extraer columna de SKUs ===
 def load_skus_from_csv(file_path):
@@ -22,30 +24,45 @@ def load_skus_from_csv(file_path):
 
 # === Automatiza el ingreso de los SKUs en GLS Ecomm ===
 def process_skus_in_gls(sku_list, window):
-    sg.popup("El proceso comenzará en 5 segundos.\nAsegúrate de que la ventana de GLS esté maximizada y activa.")
+    sg.popup("El proceso comenzará en 5 segundos.\nPor favor, deja la ventana de GLS maximizada y activa.")
     time.sleep(5)
 
+    # ✅ Solo una vez: marcar checkbox
+    pyautogui.click(CHECKBOX_COORDS)
+    time.sleep(0.3)
+
     for idx, sku in enumerate(sku_list, 1):
-        window['PROGRESS-'].update(f'Procesando SKU {idx} de {len(sku_list)}...')
+        window['-PROGRESS-'].update(f'Procesando SKU {idx} de {len(sku_list)}...')
+        window['Ejecutar'].update(disabled=True)
         window.refresh()
 
-         # Campo de texto
+        # Campo de texto: SKU
         pyautogui.click(TEXT_FIELD_COORDS)
-        time.sleep(0.4)
+        time.sleep(0.3)
         pyautogui.hotkey('ctrl', 'a')
         pyautogui.press('backspace')
-        pyautogui.write(str(sku))
+        pyautogui.write(sku)
         time.sleep(0.3)
 
-        # Checkbox
-        pyautogui.click(CHECKBOX_COORDS)
+        # Campo: Number of labels (siempre 1)
+        pyautogui.click(LABELS_FIELD_COORDS)
+        time.sleep(0.2)
+        pyautogui.hotkey('ctrl', 'a')
+        pyautogui.press('backspace')
+        pyautogui.write('1')
         time.sleep(0.2)
 
-        # Botón Print
+        # Botón: Print
         pyautogui.click(PRINT_BUTTON_COORDS)
-        time.sleep(2.5)  # Ajusta si es lento el sistema   
+        time.sleep(2)  # Espera que aparezca el popup
 
-    sg.popup("✅ Proceso completado.")
+        # Botón: Continue del popup
+        pyautogui.click(CONTINUE_BUTTON_COORDS)
+        time.sleep(0.5)
+
+    sg.popup("✅ Todos los SKUs han sido procesados.")
+    window['Ejecutar'].update(disabled=False)
+    window['-PROGRESS-'].update("")
 
 # === Función principal para la GUI ===
 def main():
