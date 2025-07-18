@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import pyautogui
 import time
-import msvcrt
+import keyboard
 
 # Coordenadas capturadas
 TEXT_FIELD_COORDS = (218, 365)
@@ -25,7 +25,7 @@ def load_skus_from_csv(path):
         return None
     
 def process_skus(skus, status_label, run_button):
-    messagebox.showinfo("Inicio", "Comienza en 5 segundos despues del OK. \nDeja GLS maximizado y casilla 'Include barcode' sin marcar. \nPresiona 'q' si deseas detener")
+    messagebox.showinfo("Inicio", "Comienza en 5 segundos despues del OK. \nDeja GLS maximizado y casilla 'Include barcode' sin marcar. \nPresiona 'q' para detener")
     time.sleep(5)
 
     # Marcar checkbox una sola vez
@@ -33,7 +33,7 @@ def process_skus(skus, status_label, run_button):
     time.sleep(0.3)
 
     for idx, sku in enumerate(skus, 1):
-        if msvcrt.kbhit() and msvcrt.getch().decode().lower() == 'q':
+        if keyboard.is_pressed('q'):
             messagebox.showinfo("Detenido", f"🛑 Proceso detenido tras {idx-1} SKUs.")
             break
 
