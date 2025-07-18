@@ -21,7 +21,7 @@ Automatiza la entrada y la impresión de múltiples SKUs en el sistema GLS Ecomm
 ### 🚦 Cómo usarlo
 1. Abre GLS Ecomm y maximiza la ventana.  
 2. Asegúrate de que la casilla **“Include barcode”** esté desmarcada.  
-3. Ejecuta `automatica.exe`.  
+3. Ejecuta `main.exe`.  
 4. Selecciona el archivo CSV.  
 5. Presiona **“Ejecutar”**.  
 6. No toques el teclado ni el ratón durante la ejecución.  
