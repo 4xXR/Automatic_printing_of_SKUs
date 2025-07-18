@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter import filedialog, messagebox
 import pyautogui
 import time
+import msvcrt
 
 # Coordenadas capturadas
 TEXT_FIELD_COORDS = (218, 365)
@@ -24,7 +25,7 @@ def load_skus_from_csv(path):
         return None
     
 def process_skus(skus, status_label, run_button):
-    messagebox.showinfo("Inicio", "Comenzando en 5 segundos. Deja GLS maximizado y checkbox sin marcar.")
+    messagebox.showinfo("Inicio", "Comienza en 5 segundos despues del OK. \nDeja GLS maximizado y casilla 'Include barcode' sin marcar. \nPresiona 'q' si deseas detener")
     time.sleep(5)
 
     # Marcar checkbox una sola vez
@@ -32,6 +33,10 @@ def process_skus(skus, status_label, run_button):
     time.sleep(0.3)
 
     for idx, sku in enumerate(skus, 1):
+        if msvcrt.kbhit() and msvcrt.getch().decode().lower() == 'q':
+            messagebox.showinfo("Detenido", f"🛑 Proceso detenido tras {idx-1} SKUs.")
+            break
+
         status_label.config(text=f"Procesando SKU {idx}/{len(skus)}")
         run_button.config(state=tk.DISABLED)
         root.update_idletasks()
@@ -47,7 +52,9 @@ def process_skus(skus, status_label, run_button):
         pyautogui.click(PRINT_BUTTON_COORDS); time.sleep(2)
         pyautogui.click(CONTINUE_BUTTON_COORDS); time.sleep(0.5)
 
-    messagebox.showinfo("Listo", "✅ Todos los SKUs han sido procesados.")
+    else:
+        messagebox.showinfo("Listo", "✅ Todos los SKUs han sido procesados.")
+
     status_label.config(text="")
     run_button.config(state=tk.NORMAL)
 

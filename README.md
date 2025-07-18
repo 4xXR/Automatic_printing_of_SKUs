@@ -34,6 +34,10 @@ Automatiza la entrada y la impresión de múltiples SKUs en el sistema GLS Ecomm
 8. Al terminar, aparecerá:
    ✅ Todos los SKUs han sido procesados
 
+### ⏹️ Stop option
+Ahora puedes detener el proceso en cualquier momento presionando la tecla **q** en tu teclado. Esto es útil si quieres cancelar la impresión, por ejemplo, tras 20 SKUs. Al presionar **q**, el programa mostrará un mensaje informando cuántos SKUs ya se procesaron y se detendrá de manera segura.
+
+
 
 ### ℹ️ Notas importantes
 - La casilla “Include barcode” se marca **solo una vez** al inicio.  
